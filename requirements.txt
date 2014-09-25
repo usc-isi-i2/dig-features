@@ -1,0 +1,7 @@
+cbor==0.1.12
+dossier.fc==0.1.1.dev2
+py==1.4.25
+pytest==2.6.3
+pytest-diffeo==0.1.7
+streamcorpus==0.3.34.dev10
+thrift==0.9.1
