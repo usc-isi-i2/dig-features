@@ -17,16 +17,9 @@ Options:
 '''
 
 import sys
-from wat.core.watdb import Watdb
 import re
-import util
-
 import csv
-import sys
-import os
 import argparse
-
-
 
 AREA_CODES= set()
 
@@ -39,24 +32,23 @@ VERSION = '2.5'
 REVISION = "$Revision: 24407 $".replace("$","")
 VERBOSE = True
 
-def valid_area_code(ac):
-    # return ensure_area_codes().get(ac,False)
+def validAreaCode(ac):
     try:
         return int(ac) in AREA_CODES
     except:
         return False
 
-def valid_phone_number(ph, test_area_code=True):
+def validPhoneNumber(ph, testAreaCode=True):
     m = re.search(r"""^[2-9]\d{2}[2-9]\d{6}$""", ph)
     if m:
-        if test_area_code:
-            return valid_area_code(ph[0:3])
+        if testAreaCode:
+            return validAreaCode(ph[0:3])
         else:
             return True
     else:
         return False
 
-def clean_phone_text(text):
+def cleanPhoneText(text):
     text = text.lower()
     
     # simply remove numeric entities
@@ -277,16 +269,16 @@ def clean_phone_text(text):
     text = re.sub(r"""l""", "1", text, flags=re.I)
     return text
 
-def make_phone_regexp():
+def makePhoneRegexp():
     return re.compile(r"""([[{(<]{0,3}[2-9][\W_]{0,3}\d[\W_]{0,3}\d[\W_]{0,6}[2-9][\W_]{0,3}\d[\W_]{0,3}\d[\W_]{0,6}\d[\W_]{0,3}\d[\W_]{0,3}\d[\W_]{0,3}\d)""")
 
-PHONE_REGEXP = make_phone_regexp()
+PHONE_REGEXP = makePhoneRegexp()
 
 # 3 May 2012
 # new strategy: skip finditer, do the indexing ourselves
 
 def genPhones(text):
-    text = clean_phone_text(text)
+    text = cleanPhoneText(text)
     regex = PHONE_REGEXP
     idx = 0
     m = regex.search(text, idx)
@@ -299,7 +291,7 @@ def genPhones(text):
         if digits[0:2] == '82' and prefix == '*':
             # this number overlaps with a *82 sequence
             idx += 2
-        elif not valid_area_code(digits[0:3]):
+        elif not validAreaCode(digits[0:3]):
             # probably a price, height, etc.
             idx += 1
         else:
